@@ -83,9 +83,9 @@ define y as TMP24;
 y = 4;
 erase y;
 init x = standTimer == 0;
-x = x ? 10 : 9;
+x = x ? 5 : 9;
 if (standTimer == 0) { standTimer = 750; }
-if (x == 10) { count = 0; }
+if (x == 5) { count = 0; }
 goto x;
 delete x;
 
@@ -134,6 +134,7 @@ if ((t1Last > 60) || (outside < 0 - 40) || (outside > 50)) { outside = 24; }
 if ((t2Last > 60) || (inside < 0-40) || (inside > 50)) { inside = 24; }
 
 init desired = t3;
+init rele1 = s1;
 init rele2 = s2;
 init rele4 = s4;
 
@@ -141,13 +142,20 @@ init tmp = outside < 20;
 rele2 = tmp ? 1 : 0;
 tmp = desired > inside;
 rele4 = tmp ? 1 : 0;
+init switchOff = tmp && (count < 5);
+rele1 = switchOff ? 0 : 1;
+delete switchOff;
 delete tmp;
 
+if (!rele1) { rele4 = 0; }
+if (rele1) { count = 0; }
+
 ind1 = rele4 ? 1 : 0;
+ind3 = rele1 ? 1 : 0;
 ind5 = rele2 ? 1 : 0;
 
-s2 = rele2; s4 = rele4;
-delete rele2; delete rele4;
+s1 = rele1; s2 = rele2; s4 = rele4;
+delete rele1; delete rele2; delete rele4;
 delete inside; delete outside; delete desired;
 
 goto 7;
@@ -239,45 +247,10 @@ if (delta > adminTimer) { adminTimer = 0; }
 if (delta <= adminTimer) { adminTimer = adminTimer - delta; }
 
 countTimer = countTimer + delta;
-if (countTimer > 45000) { countTimer = 0; count = count + 1; }
+if (countTimer > 250) { countTimer = 0; count = count + 1; }
 
 delete delta;
 init x = next_state;
 erase next_state;
 goto x;
 delete x;
-
-label 10;
-init outside;
-init tmp1 = (t1 - oldt1 > 5) || (oldt1 - t1 > 5);
-if (tmp1) { outside = oldt1; }
-if (!tmp1) { outside = t1; oldt1 = t1; }
-delete tmp1;
-if ((t1Last > 60) || (outside < 0 - 40) || (outside > 50)) { outside = 24; }
-
-init isCold = outside < 20;
-
-init rele2 = s2;
-rele2 = isCold ? 1 : 0;
-ind5 = rele2 ? 1 : 0;
-s2 = rele2;
-delete rele2;
-
-init rele1 = s1;
-init switchOff = isCold && (count < 5);
-rele1 = switchOff ? 0 : 1;
-delete switchOff;
-ind3 = rele1 ? 1 : 0;
-s1 = rele1;
-delete rele1;
-
-define next_state as TMP24;
-next_state = 10;
-erase next_state;
-
-init next;
-next = s1 ? 5 : 9;
-
-goto next;
-delete next;
-
