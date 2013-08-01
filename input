@@ -85,7 +85,7 @@ erase y;
 init x = standTimer == 0;
 x = x ? 5 : 9;
 if (standTimer == 0) { standTimer = 750; }
-if (x == 5) { count = 0; }
+if (x == 5) { count = 0; voltage = oldVol; }
 goto x;
 delete x;
 
@@ -251,7 +251,7 @@ if (delta > adminTimer) { adminTimer = 0; }
 if (delta <= adminTimer) { adminTimer = adminTimer - delta; }
 
 countTimer = countTimer + delta;
-if (countTimer > 250) { countTimer = 0; count = count + 1; }
+if (countTimer > 500) { countTimer = 0; count = count + 1; }
 
 delete delta;
 init x = next_state;
