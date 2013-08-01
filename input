@@ -142,9 +142,13 @@ init tmp = outside < 20;
 rele2 = tmp ? 1 : 0;
 tmp = desired > inside;
 rele4 = tmp ? 1 : 0;
-init switchOff = tmp && (count < 5);
-rele1 = switchOff ? 0 : 1;
-delete switchOff;
+tmp = outside < 20;
+init res_rele1;
+if (!tmp) { res_rele1 = 1; }
+if (tmp && (count >= 5)) { res_rele1 = 1; }
+if (tmp && (count < 5)) { res_rele1 = 0; }
+if (!rele1) { rele1 = res_rele1; }
+delete res_rele1;
 delete tmp;
 
 if (!rele1) { rele4 = 0; }
